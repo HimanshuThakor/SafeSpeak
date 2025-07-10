@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "156136178849",
+    "project_id": "otpverification-1aab0",
+    "storage_bucket": "otpverification-1aab0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:156136178849:android:4e83c888103d4df26fdce0",
+        "android_client_info": {
+          "package_name": "com.example.otpverification"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDl6o4ArmvGVA6O2NjENnItacjr71Vxezw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:156136178849:android:12a87b072b0263756fdce0",
+        "android_client_info": {
+          "package_name": "com.example.safespeak"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDl6o4ArmvGVA6O2NjENnItacjr71Vxezw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
