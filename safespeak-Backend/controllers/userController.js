@@ -47,12 +47,9 @@ exports.addEmergencyContact = async (req, res) => {
     if (creator.fcmToken) {
       const message = {
         notification: {
-          title: "Welcome To Safe Speak",
-          body: "You Added Succesfully A New Emergency Contact",
-        },
-        data: {
-          score: "850",
-          time: "2:45",
+          title: "Congratulation",
+          body: "You Added Succesfully A New Emergency Contact:-${name}${relationship}${phone}${email}",
+          sound: "default",
         },
         token: creator.fcmToken,
       };

@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const auth = require("../config/firebase");
+const messaging = require("../config/firebase");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { responseWrapper } = require("../helper/responseWrapper");
@@ -134,6 +135,26 @@ exports.registerController = async (req, res) => {
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
+
+    if (fcmToken) {
+      const message = {
+        notification: {
+          title: "Congratulation ${name}",
+          body: "Welcome To Safespeak Family",
+          sound: "default",
+        },
+        token: creator.fcmToken,
+      };
+
+      messaging
+        .send(message)
+        .then((response) => {
+          console.log("✅ Successfully sent message:", response);
+        })
+        .catch((error) => {
+          console.log("❌ Error sending message:", error);
+        });
+    }
 
     res.status(201).json({
       success: true,
