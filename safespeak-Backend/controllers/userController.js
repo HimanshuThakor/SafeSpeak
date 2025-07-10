@@ -52,7 +52,6 @@ exports.addEmergencyContact = async (req, res) => {
         notification: {
           title: "Congratulation",
           body: `You Added Succesfully A New Emergency Contact:-${name}${relationship}${phone}${email}`,
-          sound: "default",
         },
         token: creator.fcmToken,
       };
@@ -69,7 +68,7 @@ exports.addEmergencyContact = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Emergency contact added & user created (if new)",
+      message: "Emergency contact added & user created",
       data: contact,
     });
   } catch (err) {
