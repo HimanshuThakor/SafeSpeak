@@ -1,6 +1,6 @@
 class ApiHelper {
   static const String baseUrl =
-      'http://192.168.1.11:5000/api/'; //'https://livewellapi.life-connect.in/api/';
+      'https://safespeak.onrender.com/api/'; //'https://livewellapi.life-connect.in/api/';
   static const String loginUrl = 'auth/login';
   static const String registerUrl = 'auth/register';
   static const String getDashboardData = 'admin/dashboard';

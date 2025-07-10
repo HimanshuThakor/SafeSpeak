@@ -2,12 +2,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+
 // Import route files
 const userRoutes = require("./routes/userRoutes");
 const sosRoutes = require("./routes/sosRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const toxicityRoutes = require("./routes/toxicityRoutes");
 const authRoutes = require("./routes/authRoutes");
+
 
 dotenv.config();
 
@@ -34,6 +36,7 @@ async function main() {
     app.use("/api/sos", sosRoutes);
     app.use("/api/report", reportRoutes);
     app.use("/api/toxicity", toxicityRoutes);
+
     app.listen(PORT, () => console.log(`🚀 Server running at http://${PORT}`));
   } catch (err) {
     console.error("❌ Failed to connect MongoDB:", err.message);
