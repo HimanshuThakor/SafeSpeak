@@ -51,7 +51,7 @@ exports.addEmergencyContact = async (req, res) => {
       const message = {
         notification: {
           title: "Congratulation",
-          body: `You Added Succesfully A New Emergency Contact:-${name}${relationship}${phone}${email}`,
+          body: `You Added Succesfully A New Emergency Contact:-${name}${phone}`,
         },
         token: creator.fcmToken,
       };
