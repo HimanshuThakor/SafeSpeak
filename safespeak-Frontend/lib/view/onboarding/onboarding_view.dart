@@ -48,9 +48,9 @@ class OnboardingScreenState extends State<OnboardingScreen> {
             .build());
 
     _socket.onConnect((data) => print('Connection established on count Read'));
-    _socket.onConnectError(
-      (data) => socketManager.connectWithRetry(),
-    );
+    // _socket.onConnectError(
+    //   (data) => socketManager.connectWithRetry(),
+    // );
     // _socket.onConnectTimeout((data) {
     //   socketManager.connectWithRetry();
     // });
