@@ -1,15 +1,13 @@
 const express = require("express");
-const router = express.Router();
-const {
-  firebaseAuth,
-  firebaseSignup,
-  logIn,
-  registerController,
-} = require("../controllers/authController");
 
-router.post("/firebaseAuth", firebaseAuth);
-router.post("/signup", firebaseSignup);
-router.post("/login", logIn);
-router.post("/register", registerController);
+module.exports = (io) => {
+  const router = express.Router();
+  const authController = require("../controllers/authController")(io); // inject io
 
-module.exports = router;
+  router.post("/firebaseAuth", authController.firebaseAuth);
+  router.post("/signup", authController.firebaseSignup);
+  router.post("/login", authController.logIn);
+  router.post("/register", authController.registerController);
+
+  return router;
+};

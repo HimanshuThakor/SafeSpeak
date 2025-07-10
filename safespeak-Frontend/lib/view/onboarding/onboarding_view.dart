@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:safespeak/Services/SocketManager.dart';
 import 'package:safespeak/Support/Widgets/primary_button.dart';
+import 'package:safespeak/Utils/ApiHelper.dart';
 import 'package:safespeak/Utils/app_colors.dart';
 import 'package:safespeak/models/onboarding.dart';
 import 'package:safespeak/view/authentication/SignInScreen.dart';
@@ -11,6 +13,7 @@ import 'package:safespeak/view/onboarding/components/next_button.dart';
 import 'package:safespeak/view/onboarding/components/onboarding_card.dart';
 import 'package:safespeak/view/onboarding/components/skip_button.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -21,7 +24,45 @@ class OnboardingScreen extends StatefulWidget {
 
 class OnboardingScreenState extends State<OnboardingScreen> {
   int _currentPageIndex = 0;
+  late IO.Socket _socket;
   final _pageController = PageController();
+  final socketManager = SocketManager();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _connectSocket();
+  }
+
+  void _connectSocket() {
+    _socket = IO.io(
+        ApiHelper.socketUrl,
+        IO.OptionBuilder()
+            .setTransports(['websocket'])
+            .setExtraHeaders({"Content-type": "application/json"})
+            .setTimeout(30000)
+            .enableAutoConnect()
+            .enableReconnection()
+            .enableForceNewConnection()
+            .build());
+
+    _socket.onConnect((data) => print('Connection established on count Read'));
+    _socket.onConnectError(
+      (data) => socketManager.connectWithRetry(),
+    );
+    // _socket.onConnectTimeout((data) {
+    //   socketManager.connectWithRetry();
+    // });
+    _socket.onDisconnect(
+        (data) => print('Socket.IO server disconnected on count'));
+
+    _socket.on('login_success', (data) {
+      if (data != null) {
+        print("Data=$data");
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

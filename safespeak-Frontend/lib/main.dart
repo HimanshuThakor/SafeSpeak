@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_api_availability/google_api_availability.dart';
 import 'package:safespeak/Services/Notification_Services_Local.dart';
+import 'package:safespeak/Services/SocketManager.dart';
 import 'package:safespeak/Services/firebase_options.dart';
 import 'package:safespeak/Support/MyHttpOverrides.dart';
 import 'package:safespeak/view/onboarding/onboarding_view.dart';
@@ -75,6 +76,9 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+
+  final socketManager = SocketManager();
+  socketManager.connectWithRetry();
   runApp(const ProviderScope(child: MyApp()));
 }
 
