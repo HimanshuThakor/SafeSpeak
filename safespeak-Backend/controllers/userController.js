@@ -45,14 +45,13 @@ exports.addEmergencyContact = async (req, res) => {
 
     await sendInvitation({ name, email });
 
-
     // Step 4: Send FCM Notification to the main user (creator)
     // Send FCM Notification to the main user (creator)
     if (creator.fcmToken) {
       const message = {
         notification: {
           title: "Congratulation",
-          body: "You Added Succesfully A New Emergency Contact:-${name}${relationship}${phone}${email}",
+          body: `You Added Succesfully A New Emergency Contact:-${name}${relationship}${phone}${email}`,
           sound: "default",
         },
         token: creator.fcmToken,

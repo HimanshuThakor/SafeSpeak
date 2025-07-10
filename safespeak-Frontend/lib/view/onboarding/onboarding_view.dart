@@ -5,10 +5,7 @@ import 'package:safespeak/Support/Widgets/primary_button.dart';
 import 'package:safespeak/Utils/ApiHelper.dart';
 import 'package:safespeak/Utils/app_colors.dart';
 import 'package:safespeak/models/onboarding.dart';
-import 'package:safespeak/view/authentication/SignInScreen.dart';
 import 'package:safespeak/view/authentication/bunny_login.dart';
-import 'package:safespeak/view/authentication/kochalo_login.dart';
-import 'package:safespeak/view/authentication/man_login.dart';
 import 'package:safespeak/view/onboarding/components/next_button.dart';
 import 'package:safespeak/view/onboarding/components/onboarding_card.dart';
 import 'package:safespeak/view/onboarding/components/skip_button.dart';
@@ -80,7 +77,7 @@ class OnboardingScreenState extends State<OnboardingScreen> {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ManLoginScreen(),
+                    builder: (context) => BunnyLoginScreen(),
                   ));
               // Navigator.pushAndRemoveUntil(
               //     context,
