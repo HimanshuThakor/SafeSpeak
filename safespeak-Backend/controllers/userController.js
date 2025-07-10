@@ -3,6 +3,7 @@ const EmergencyContact = require("../models/EmergencyContact");
 const { responseWrapper } = require("../helper/responseWrapper");
 const { sendSMSorEmail } = require("../utils/sendInvite");
 const User = require("../models/User"); // ✅ Ensure this line exists
+const sendInvitation = require("../utils/sendInvitation");
 
 // ✅ Create/Add Emergency Contact
 exports.addEmergencyContact = async (req, res) => {
@@ -41,6 +42,9 @@ exports.addEmergencyContact = async (req, res) => {
       relationship,
       linkedUserId: existingUser._id,
     });
+
+    await sendInvitation({ name, email });
+
 
     // Step 4: Send FCM Notification to the main user (creator)
     // Send FCM Notification to the main user (creator)
