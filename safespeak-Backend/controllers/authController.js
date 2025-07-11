@@ -60,10 +60,12 @@ module.exports = (io) => ({
 
   logIn: async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { email, password, fcmToken } = req.body;
       const user = await User.findOne({ email });
       if (!user) {
-        return res.status(404).json(responseWrapper(false,404, "User not found"));
+        return res
+          .status(404)
+          .json(responseWrapper(false, 404, "User not found"));
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
@@ -73,6 +75,11 @@ module.exports = (io) => ({
             msg: "Please enter correct password",
           })
         );
+
+      if (user.fcmToken === "") {
+        user.fcmToken = fcmToken;
+        await user.save();
+      }
 
       const token = jwt.sign(
         { id: user._id, role: user.role },

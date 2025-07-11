@@ -15,6 +15,8 @@ const sendInvitation = async ({ name, email, resetLink }) => {
         🔽 Download SafeSpeak App
       </a>
     </p>
+    <br>
+    <br>
     <p>Please <a href="${resetLink}">click here to set your password</a> and start using the app.</p>
 
     <p>If you weren’t expecting this, you can ignore the email.</p>
