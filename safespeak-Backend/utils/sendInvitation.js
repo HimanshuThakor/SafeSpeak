@@ -1,7 +1,7 @@
 const sendMail = require("./sendMail");
 const path = require("path");
 
-const sendInvitation = async ({ name, email }) => {
+const sendInvitation = async ({ name, email, resetLink }) => {
   const appLink = "https://we.tl/t-C48T8iPC1G"; // update with real link
   const htmlContent = `
     <h2>📲 You're Invited to Join SafeSpeak!</h2>
@@ -15,6 +15,7 @@ const sendInvitation = async ({ name, email }) => {
         🔽 Download SafeSpeak App
       </a>
     </p>
+    <p>Please <a href="${resetLink}">click here to set your password</a> and start using the app.</p>
 
     <p>If you weren’t expecting this, you can ignore the email.</p>
     <p>Thanks,<br/>The SafeSpeak Team 🔐</p>

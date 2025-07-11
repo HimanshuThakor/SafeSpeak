@@ -32,7 +32,7 @@ exports.addEmergencyContact = async (req, res) => {
 
       const firebaseUser = await admin.auth().createUser({
         email,
-        password: creator.password, // 👈 Set default password or generate a random one
+        password: creator.password,
         displayName: name,
         phoneNumber: `+91${phone}`, // Optional: must be E.164 format if used
       });
@@ -51,7 +51,8 @@ exports.addEmergencyContact = async (req, res) => {
       linkedUserId: existingUser._id,
     });
 
-    await sendInvitation({ name, email });
+    const resetLink = await admin.auth().generatePasswordResetLink(email);
+    await sendInvitation({ name, email, resetLink });
 
     // Step 4: Send FCM Notification to the main user (creator)
     // Send FCM Notification to the main user (creator)
