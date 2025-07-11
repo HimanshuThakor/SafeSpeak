@@ -86,6 +86,7 @@ class _SOSScreenState extends ConsumerState<SOSScreen>
       _isCountdownActive = false;
     });
 
+    ref.read(reportDialogProvider.notifier).submitSos();
     // Haptic feedback
     HapticFeedback.heavyImpact();
 

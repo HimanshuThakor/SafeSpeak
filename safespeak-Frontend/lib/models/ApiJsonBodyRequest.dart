@@ -44,7 +44,8 @@ class ApiBodyJson {
       this.receipt,
       this.fcmToken,
       this.message,
-      this.relationship});
+      this.relationship,
+      this.timestamp});
 
   ApiBodyJson.fromJson(dynamic json) {
     name = json['name'];
@@ -92,6 +93,7 @@ class ApiBodyJson {
     fcmToken = json['fcmToken'];
     message = json['message'];
     relationship = json['relationship'];
+    timestamp = json['timestamp'];
   }
 
   String? name;
@@ -139,6 +141,7 @@ class ApiBodyJson {
   String? fcmToken;
   String? message;
   String? relationship;
+  DateTime? timestamp;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -187,6 +190,7 @@ class ApiBodyJson {
     map['fcmToken'] = fcmToken;
     map['message'] = message;
     map['relationship'] = relationship;
+    map['timestamp'] = timestamp?.toIso8601String();
     map.removeWhere((key, value) => value == null);
     return map;
   }

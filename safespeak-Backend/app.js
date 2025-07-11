@@ -66,7 +66,7 @@ async function main() {
     app.use("/api/toxicity", toxicityRoutes);
 
     // Start the server
-    server.listen(PORT,() =>
+    server.listen(PORT, () =>
       console.log(`🚀 Server running at http://:${PORT}`)
     );
   } catch (err) {

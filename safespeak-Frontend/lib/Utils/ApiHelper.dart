@@ -29,4 +29,5 @@ class ApiHelper {
   static const String updateFamilyMember = 'users/update-emergency-contacts';
   static const String getFamilyMembers = 'users/get-emergency-contacts';
   static const String removeFamilyMember = 'users/delete-emergency-contacts';
+  static const String submitSos = 'sos/send-sos';
 }

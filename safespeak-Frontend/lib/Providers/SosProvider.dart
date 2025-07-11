@@ -1,4 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:safespeak/Providers/ApiServiceProvider.dart';
+import 'package:safespeak/Services/SessionManagement.dart';
+import 'package:safespeak/Services/api_service.dart';
+import 'package:safespeak/models/ApiJsonBodyRequest.dart';
+import 'package:safespeak/models/ResponseModel.dart';
 
 // Enum for report types
 enum ReportType {
@@ -51,7 +56,13 @@ class ReportDialogState {
 
 // StateNotifier for managing report dialog state
 class ReportDialogNotifier extends StateNotifier<ReportDialogState> {
-  ReportDialogNotifier() : super(const ReportDialogState());
+  ReportDialogNotifier(this.ref)
+      : _api = ref.read(apiServiceProvider),
+        _session = ref.read(sessionMgmtProvider),
+        super(const ReportDialogState());
+  final Ref ref;
+  final ApiService _api;
+  final SessionManagement _session;
 
   void selectReportType(ReportType reportType) {
     state = state.copyWith(selectedReportType: reportType);
@@ -59,6 +70,29 @@ class ReportDialogNotifier extends StateNotifier<ReportDialogState> {
 
   void clearSelection() {
     state = state.copyWith(selectedReportType: null);
+  }
+
+  Future<void> submitSos() async {
+    state = state.copyWith(isLoading: true, errorMessage: null);
+    try {
+      var loginResponse = await _session.getModel("MAP");
+      String id = loginResponse!.user!.id;
+      ResponseModel? response = await _api.submitSos(ApiBodyJson(
+          userId: id, location: "123456", timestamp: DateTime.now()));
+      if (response != null && response.success == true) {
+        state = state.copyWith(isLoading: false);
+      } else {
+        state = state.copyWith(
+            isLoading: false,
+            errorMessage: 'Failed to submit SOS. Please try again.');
+      }
+    } catch (e) {
+      state = state.copyWith(
+          isLoading: false,
+          errorMessage: 'Failed to submit SOS. Please try again.');
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
   }
 
   Future<void> submitReport() async {
@@ -94,5 +128,5 @@ class ReportDialogNotifier extends StateNotifier<ReportDialogState> {
 // Provider for the report dialog
 final reportDialogProvider =
     StateNotifierProvider<ReportDialogNotifier, ReportDialogState>(
-  (ref) => ReportDialogNotifier(),
+  (ref) => ReportDialogNotifier(ref),
 );

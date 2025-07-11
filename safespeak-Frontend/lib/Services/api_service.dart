@@ -53,6 +53,9 @@ class ApiService {
   Future<ResponseModel?> removeFamilyMember(String id, String userid) =>
       _post("users/$userid/delete-emergency-contacts/$id", {});
 
+  Future<ResponseModel?> submitSos(ApiBodyJson body) =>
+      _post(ApiHelper.submitSos, body.toJson());
+
 // // /* ───────── EVENTS ───────── */
 // Future<ResponseModel?> fetchEvents() => _get(ApiHelper.getEvents);
 //

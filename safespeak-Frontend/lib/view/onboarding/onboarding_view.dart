@@ -38,22 +38,10 @@ class OnboardingScreenState extends State<OnboardingScreen> {
         IO.OptionBuilder()
             .setTransports(['websocket'])
             .setExtraHeaders({"Content-type": "application/json"})
-            .setTimeout(30000)
+            .setTimeout(3000)
             .enableAutoConnect()
             .enableReconnection()
-            .enableForceNewConnection()
             .build());
-
-    _socket.onConnect((data) => print('Connection established on count Read'));
-    // _socket.onConnectError(
-    //   (data) => socketManager.connectWithRetry(),
-    // );
-    // _socket.onConnectTimeout((data) {
-    //   socketManager.connectWithRetry();
-    // });
-    _socket.onDisconnect(
-        (data) => print('Socket.IO server disconnected on count'));
-
     _socket.on('login_success', (data) {
       if (data != null) {
         print("Data=$data");

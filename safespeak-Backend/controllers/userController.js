@@ -29,8 +29,8 @@ exports.addEmergencyContact = async (req, res) => {
         isAutoCreated: true, // Optional flag
       });
 
-      // Optional: send SMS/email invite
-      await sendSMSorEmail({ name, email, phone });
+      // // Optional: send SMS/email invite
+      // await sendSMSorEmail({ name, email, phone });
     }
 
     // Step 3: Save emergency contact
