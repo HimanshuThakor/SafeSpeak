@@ -2,6 +2,7 @@ const { sendPushNotification } = require("../utils/sendNotification");
 const SOS = require("../models/SOS");
 const EmergencyContact = require("../models/EmergencyContact");
 const User = require("../models/User");
+const messaging = require("../config/firebase");
 
 exports.sendSOS = async (req, res) => {
   try {
@@ -25,17 +26,33 @@ exports.sendSOS = async (req, res) => {
     // 4. Loop over contacts and send push notification
     for (const contact of contacts) {
       if (contact.fcmToken) {
-        await sendPushNotification({
-          to: contact.fcmToken,
-          title: `SOS Alert from ${user.displayName || "a family member"}`,
-          body: `Location: ${location}. Immediate help may be needed.`,
-          data: {
-            type: "sos_alert",
-            location,
-            userId,
-            timestamp,
+        const message = {
+          notification: {
+            title: `SOS Alert from ${user.displayName || "a family member"}`,
+            body: `Location: ${location}. Immediate help may be needed.`,
           },
-        });
+          token: contact.fcmToken,
+        };
+
+        messaging
+          .send(message)
+          .then((response) => {
+            console.log("✅ Successfully sent message:", response);
+          })
+          .catch((error) => {
+            console.log("❌ Error sending message:", error);
+          });
+        // await sendPushNotification({
+        //   to: contact.fcmToken,
+        //   title: `SOS Alert from ${user.displayName || "a family member"}`,
+        //   body: `Location: ${location}. Immediate help may be needed.`,
+        //   data: {
+        //     type: "sos_alert",
+        //     location,
+        //     userId,
+        //     timestamp,
+        //   },
+        // });
       }
     }
 
