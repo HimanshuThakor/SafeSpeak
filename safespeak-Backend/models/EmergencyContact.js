@@ -10,7 +10,7 @@ const emergencyContactSchema = new mongoose.Schema({
   relationship: { type: String },
   phone: { type: String },
   email: { type: String },
-  fcmToken: { type: String },
+  fcmToken: { type: String, default: "" },
   linkedUserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

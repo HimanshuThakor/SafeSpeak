@@ -26,6 +26,7 @@ exports.addEmergencyContact = async (req, res) => {
         displayName: name,
         email,
         phone,
+        fcmToken: creator.fcmToken,
         password: creator.password,
         isAutoCreated: true, // Optional flag
       });
@@ -48,6 +49,7 @@ exports.addEmergencyContact = async (req, res) => {
       email,
       phone,
       relationship,
+      fcmToken: creator.fcmToken,
       linkedUserId: existingUser._id,
     });
 

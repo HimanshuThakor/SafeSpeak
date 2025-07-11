@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:safespeak/Providers/ApiServiceProvider.dart';
 import 'package:safespeak/Services/SessionManagement.dart';
 import 'package:safespeak/Services/api_service.dart';
@@ -15,26 +14,34 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthState {
   final bool isLoading;
-  final User? user;
+  final String? userId;
+  final String? email;
+  final String? name;
   final String? error;
   final bool isAuthenticated;
 
   AuthState({
     this.isLoading = false,
-    this.user,
+    this.userId,
+    this.email,
+    this.name,
     this.error,
     this.isAuthenticated = false,
   });
 
   AuthState copyWith({
     bool? isLoading,
-    User? user,
+    String? userId,
+    String? email,
+    String? name,
     String? error,
     bool? isAuthenticated,
   }) {
     return AuthState(
       isLoading: isLoading ?? this.isLoading,
-      user: user ?? this.user,
+      userId: userId ?? this.userId,
+      email: email ?? this.email,
+      name: name ?? this.name,
       error: error,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
     );
@@ -47,61 +54,79 @@ class AuthNotifier extends StateNotifier<AuthState> {
         _loginHelper = ref.read(loginHelperProvider),
         _session = ref.read(sessionMgmtProvider),
         super(AuthState()) {
-    // Listen to auth state changes
-    _authStateSubscription = _firebaseAuth.authStateChanges().listen((user) {
-      // Only set authenticated state if we have both Firebase user and valid API session
-      if (user != null) {
-        _checkApiSession();
-      } else {
-        state = state.copyWith(
-          user: null,
-          isAuthenticated: false,
-          isLoading: false,
-        );
-      }
-    });
+    // Check authentication status on initialization
+    _checkAuthStatus();
   }
 
   final Ref ref;
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final ApiService _api;
   final LoginHelper _loginHelper;
   final SessionManagement _session;
 
-  late final StreamSubscription<User?> _authStateSubscription;
-
-  @override
-  void dispose() {
-    _authStateSubscription.cancel();
-    super.dispose();
-  }
-
   // Check if user has valid API session
-  Future<void> _checkApiSession() async {
+  Future<void> _checkAuthStatus() async {
     try {
+      state = state.copyWith(isLoading: true);
+
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString(SPHelper.Token);
       final isLoggedIn = await _loginHelper.getIsLogin();
 
       if (token != null && isLoggedIn == true) {
+        // Get user info from session or API
+        final userInfo = await _getUserInfo();
+
         state = state.copyWith(
-          user: _firebaseAuth.currentUser,
+          userId: userInfo['userId'],
+          email: userInfo['email'],
+          name: userInfo['name'],
           isAuthenticated: true,
           isLoading: false,
         );
       } else {
         state = state.copyWith(
-          user: null,
+          userId: null,
+          email: null,
+          name: null,
           isAuthenticated: false,
           isLoading: false,
         );
       }
     } catch (e) {
       state = state.copyWith(
-        user: null,
+        userId: null,
+        email: null,
+        name: null,
         isAuthenticated: false,
         isLoading: false,
       );
+    }
+  }
+
+  // Get user info from local storage or API
+  Future<Map<String, String?>> _getUserInfo() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return {
+        'userId': prefs.getString('userId'),
+        'email': prefs.getString('userEmail'),
+        'name': prefs.getString('userName'),
+      };
+    } catch (e) {
+      return {'userId': null, 'email': null, 'name': null};
+    }
+  }
+
+  // Save user info to local storage
+  Future<void> _saveUserInfo(
+      String? userId, String? email, String? name) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (userId != null) await prefs.setString('userId', userId);
+      if (email != null) await prefs.setString('userEmail', email);
+      if (name != null) await prefs.setString('userName', name);
+    } catch (e) {
+      // Handle error if needed
     }
   }
 
@@ -113,66 +138,48 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       String? token = await FirebaseMessaging.instance.getToken();
 
-      // First, create user with Firebase
-      final UserCredential result =
-          await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
+      // Call the API to create user
+      ResponseModel? response = await _api.signup(
+        ApiBodyJson(
+            email: email,
+            password: password,
+            name: name,
+            phone: phone,
+            fcmToken: token),
       );
 
-      // If Firebase signup is successful, call the API
-      if (result.user != null) {
-        try {
-          ResponseModel? response = await _api.signup(
-            ApiBodyJson(
-                email: email,
-                password: password,
-                name: name,
-                phone: phone,
-                fcmToken: token),
-          );
+      // Check if API call was successful
+      if (response != null && response.data != null) {
+        RegisterUserModel registerUser =
+            RegisterUserModel.fromJson(response.data);
+        final prefs = await SharedPreferences.getInstance();
 
-          // Check if API call was successful
-          if (response != null && response.data != null) {
-            RegisterUserModel registerUser =
-                RegisterUserModel.fromJson(response.data);
-            final prefs = await SharedPreferences.getInstance();
+        // Save token and login status
+        await _loginHelper.setToken(registerUser.token ?? '');
+        await prefs.setString(SPHelper.Token, registerUser.token ?? '');
+        await _loginHelper.setIsLogin(true);
 
-            // Save token and login status
-            await _loginHelper.setToken(registerUser.token ?? '');
-            await prefs.setString(SPHelper.Token, registerUser.token ?? '');
-            await _loginHelper.setIsLogin(true);
+        // Create session
+        LogInModel logInModel = LogInModel.fromJson(response.data);
+        await _session.createSessionMap(logInModel);
 
-            // Create session
-            LogInModel logInModel = LogInModel.fromJson(response.data);
-            await _session.createSessionMap(logInModel);
+        // Save user info
+        await _saveUserInfo(
+          registerUser.user!.id ?? logInModel.user!.id,
+          email,
+          name,
+        );
 
-            // Send email verification
-            if (!result.user!.emailVerified) {
-              await result.user!.sendEmailVerification();
-            }
-
-            state = state.copyWith(
-              isLoading: false,
-              user: result.user,
-              isAuthenticated: true,
-            );
-          } else {
-            // If API call failed, delete the Firebase user and throw error
-            await result.user!.delete();
-            throw Exception('Failed to create account on server');
-          }
-        } catch (apiError) {
-          // If API call failed, delete the Firebase user
-          await result.user!.delete();
-          throw apiError;
-        }
+        state = state.copyWith(
+          isLoading: false,
+          userId: registerUser.user!.id ?? logInModel.user!.id,
+          email: email,
+          name: name,
+          isAuthenticated: true,
+        );
+      } else {
+        throw Exception('Failed to create account on server');
       }
-    } on FirebaseAuthException catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: _getErrorMessage(e),
-      );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -183,60 +190,47 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  // Sign in with email and password - Check API first, then Firebase
+  // Sign in with email and password
   Future<void> signInWithEmailAndPassword(String email, String password) async {
     try {
       state = state.copyWith(isLoading: true, error: null);
+      String? token = await FirebaseMessaging.instance.getToken();
 
-      // First check with API
+      // Call API to login
       ResponseModel? response = await _api.login(
         ApiBodyJson(
           email: email,
           password: password,
+          fcmToken: token,
         ),
       );
 
       if (response != null && response.data != null) {
-        // API login successful, now sign in with Firebase
-        try {
-          final UserCredential result =
-              await _firebaseAuth.signInWithEmailAndPassword(
-            email: email,
-            password: password,
-          );
+        // Save login data from API response
+        LogInModel login = LogInModel.fromJson(response.data);
+        final prefs = await SharedPreferences.getInstance();
+        await _loginHelper.setToken(login.token ?? '');
+        await prefs.setString(SPHelper.Token, login.token ?? '');
+        await _loginHelper.setIsLogin(true);
+        await _session.createSessionMap(login);
 
-          if (result.user != null && !result.user!.emailVerified) {
-            await result.user!.sendEmailVerification();
-            signUpWithEmailAndPassword(email, password, '', '');
-          }
+        // Save user info
+        await _saveUserInfo(
+          login.user!.id,
+          email,
+          login.user!.name,
+        );
 
-          // Save login data from API response
-          LogInModel login = LogInModel.fromJson(response.data);
-          final prefs = await SharedPreferences.getInstance();
-          await _loginHelper.setToken(login.token ?? '');
-          await prefs.setString(SPHelper.Token, login.token ?? '');
-          await _loginHelper.setIsLogin(true);
-          await _session.createSessionMap(login);
-
-          state = state.copyWith(
-            isLoading: false,
-            user: result.user,
-            isAuthenticated: true,
-          );
-        } on FirebaseAuthException catch (e) {
-          // If Firebase login fails after API success, clear the API session
-          await _clearUserSession();
-          throw e;
-        }
+        state = state.copyWith(
+          isLoading: false,
+          userId: login.user!.id,
+          email: email,
+          name: login.user!.name,
+          isAuthenticated: true,
+        );
       } else {
-        // API login failed
         throw Exception('Invalid credentials or user not found');
       }
-    } on FirebaseAuthException catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: _getErrorMessage(e),
-      );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -247,37 +241,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  // Sign in with Google
+  // Sign in with Google (placeholder - implement according to your needs)
   Future<void> signInWithGoogle() async {
     try {
-      // state = state.copyWith(isLoading: true, error: null);
-      //
-      // final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      // if (googleUser == null) {
-      //   state = state.copyWith(isLoading: false);
-      //   return;
-      // }
-      //
-      // final GoogleSignInAuthentication googleAuth =
-      //     await googleUser.authentication;
-      //
-      // final credential = GoogleAuthProvider.credential(
-      //   accessToken: googleAuth.idToken,
-      //   idToken: googleAuth.idToken,
-      // );
-      //
-      // final UserCredential result =
-      //     await _firebaseAuth.signInWithCredential(credential);
-      //
-      // state = state.copyWith(
-      //   isLoading: false,
-      //   user: result.user,
-      //   isAuthenticated: true,
-      // );
-    } on FirebaseAuthException catch (e) {
+      state = state.copyWith(isLoading: true, error: null);
+
+      // Implement Google Sign In logic here
+      // You might want to use google_sign_in package
+      // and then call your API with the Google credentials
+
       state = state.copyWith(
         isLoading: false,
-        error: _getErrorMessage(e),
+        error: 'Google Sign In not implemented',
       );
     } catch (e) {
       state = state.copyWith(
@@ -292,6 +267,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(SPHelper.Token);
+      await prefs.remove('userId');
+      await prefs.remove('userEmail');
+      await prefs.remove('userName');
       await _loginHelper.setToken('');
       await _loginHelper.setIsLogin(false);
       await _session.clearLocalStorage();
@@ -305,12 +283,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
-      await _firebaseAuth.signOut();
       await _clearUserSession();
 
       state = state.copyWith(
         isLoading: false,
-        user: null,
+        userId: null,
+        email: null,
+        name: null,
         isAuthenticated: false,
       );
     } catch (e) {
@@ -326,14 +305,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       state = state.copyWith(isLoading: true, error: null);
 
-      await _firebaseAuth.sendPasswordResetEmail(email: email);
-
-      state = state.copyWith(isLoading: false);
-    } on FirebaseAuthException catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: _getErrorMessage(e),
-      );
+      // Call your API to send password reset email
+      // Replace this with your actual API call
+      // ResponseModel? response = await _api.resetPassword(email);
+      //
+      // if (response != null && response.success == true) {
+      //   state = state.copyWith(isLoading: false);
+      // } else {
+      //   throw Exception('Failed to send reset email');
+      // }
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -347,29 +327,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(error: null);
   }
 
-  // Get user-friendly error messages
-  String _getErrorMessage(FirebaseAuthException e) {
-    switch (e.code) {
-      case 'user-not-found':
-        return 'No user found with this email address.';
-      case 'wrong-password':
-        return 'Wrong password provided.';
-      case 'email-already-in-use':
-        return 'An account already exists with this email address.';
-      case 'weak-password':
-        return 'The password provided is too weak.';
-      case 'invalid-email':
-        return 'The email address is not valid.';
-      case 'user-disabled':
-        return 'This user account has been disabled.';
-      case 'too-many-requests':
-        return 'Too many requests. Try again later.';
-      case 'operation-not-allowed':
-        return 'This operation is not allowed.';
-      default:
-        return e.message ?? 'An error occurred during authentication.';
-    }
-  }
+  // Check if user is authenticated
+  bool get isAuthenticated => state.isAuthenticated;
+
+  // Get current user info
+  Map<String, String?> get currentUser => {
+        'userId': state.userId,
+        'email': state.email,
+        'name': state.name,
+      };
 }
 
 // Providers
@@ -383,6 +349,11 @@ final isAuthenticatedProvider = Provider<bool>((ref) {
 });
 
 // Helper provider to get current user
-final currentUserProvider = Provider<User?>((ref) {
-  return ref.watch(authProvider).user;
+final currentUserProvider = Provider<Map<String, String?>>((ref) {
+  final authState = ref.watch(authProvider);
+  return {
+    'userId': authState.userId,
+    'email': authState.email,
+    'name': authState.name,
+  };
 });

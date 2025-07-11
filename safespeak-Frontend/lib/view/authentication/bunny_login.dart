@@ -220,7 +220,7 @@ class _BunnyLoginScreenState extends ConsumerState<BunnyLoginScreen> {
             backgroundColor: Colors.red,
           ),
         );
-      } else if (next.isAuthenticated && next.user != null) {
+      } else if (next.isAuthenticated && next.userId != null) {
         loginSuccessTrigger?.fire();
         // Add a small delay to show success animation
         Future.delayed(const Duration(milliseconds: 500), () {

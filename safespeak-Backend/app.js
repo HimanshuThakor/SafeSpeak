@@ -66,8 +66,8 @@ async function main() {
     app.use("/api/toxicity", toxicityRoutes);
 
     // Start the server
-    server.listen(PORT, () =>
-      console.log(`🚀 Server running at http://:${PORT}`)
+    server.listen(PORT, "192.168.1.11", () =>
+      console.log(`🚀 Server running at http://192.168.1.11:${PORT}`)
     );
   } catch (err) {
     console.error("❌ Failed to connect MongoDB:", err.message);
