@@ -63,7 +63,7 @@ module.exports = (io) => ({
       const { email, password } = req.body;
       const user = await User.findOne({ email });
       if (!user) {
-        return res.status(404).json(responseWrapper(404, "User not found"));
+        return res.status(404).json(responseWrapper(false,404, "User not found"));
       }
 
       const isMatch = await bcrypt.compare(password, user.password);

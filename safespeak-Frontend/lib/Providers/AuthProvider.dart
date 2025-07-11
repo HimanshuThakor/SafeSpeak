@@ -205,6 +205,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
             password: password,
           );
 
+          if (result.user != null && !result.user!.emailVerified) {
+            await result.user!.sendEmailVerification();
+            signUpWithEmailAndPassword(email, password, '', '');
+          }
+
           // Save login data from API response
           LogInModel login = LogInModel.fromJson(response.data);
           final prefs = await SharedPreferences.getInstance();

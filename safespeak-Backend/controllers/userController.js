@@ -4,6 +4,7 @@ const { responseWrapper } = require("../helper/responseWrapper");
 const { sendSMSorEmail } = require("../utils/sendInvite");
 const User = require("../models/User"); // ✅ Ensure this line exists
 const sendInvitation = require("../utils/sendInvitation");
+const admin = require("firebase-admin"); // ✅ Import full admin SDK here
 
 // ✅ Create/Add Emergency Contact
 exports.addEmergencyContact = async (req, res) => {
@@ -27,6 +28,13 @@ exports.addEmergencyContact = async (req, res) => {
         phone,
         password: creator.password,
         isAutoCreated: true, // Optional flag
+      });
+
+      const firebaseUser = await admin.auth().createUser({
+        email,
+        password: creator.password, // 👈 Set default password or generate a random one
+        displayName: name,
+        phoneNumber: `+91${phone}`, // Optional: must be E.164 format if used
       });
 
       // // Optional: send SMS/email invite
