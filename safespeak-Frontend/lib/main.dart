@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -25,7 +23,6 @@ FlutterLocalNotificationsPlugin notificationsPlugin =
 final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
 
 late final FirebaseApp app;
-late final FirebaseAuth auth;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,9 +35,6 @@ void main() async {
     name: "com.example.safespeak",
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  auth = FirebaseAuth.instanceFor(app: app);
-  FirebaseAuth.instance.setLanguageCode('en'); // Or any other locale code
-  FirebaseAuth.instance.setSettings(forceRecaptchaFlow: true);
   await NotificationService.intialize();
   await NotificationService.getAppCheckToken();
   AndroidInitializationSettings androidInitializationSettings =
