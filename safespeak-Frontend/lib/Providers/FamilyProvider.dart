@@ -46,13 +46,9 @@ class FamilyMembersNotifier extends StateNotifier<FamilyState> {
       var loginResponse = await _session.getModel("MAP");
       String id = loginResponse!.user!.id;
 
-      print("id is $id");
-
       // Call API to get family members
       ResponseModel? response =
           await _api.getFamilyMembers(ApiBodyJson(id: id));
-
-      print("Response: ${response!.toJson()}");
 
       if (response != null && response.success == true) {
         FamilyMember member = FamilyMember.fromJson(response.data);
@@ -61,7 +57,8 @@ class FamilyMembersNotifier extends StateNotifier<FamilyState> {
         state = state.copyWith(isLoading: false);
       }
     } catch (e) {
-      print('Error fetching family members: $e');
+      state = state.copyWith(isLoading: false);
+    } finally {
       state = state.copyWith(isLoading: false);
     }
   }
@@ -92,9 +89,10 @@ class FamilyMembersNotifier extends StateNotifier<FamilyState> {
         return false;
       }
     } catch (e) {
-      print('Error adding family member: $e');
       state = state.copyWith(isLoading: false);
       return false;
+    } finally {
+      state = state.copyWith(isLoading: false);
     }
   }
 
@@ -117,9 +115,10 @@ class FamilyMembersNotifier extends StateNotifier<FamilyState> {
         return false;
       }
     } catch (e) {
-      print('Error removing family member: $e');
       state = state.copyWith(isLoading: false);
       return false;
+    } finally {
+      state = state.copyWith(isLoading: false);
     }
   }
 
@@ -146,9 +145,10 @@ class FamilyMembersNotifier extends StateNotifier<FamilyState> {
         return false;
       }
     } catch (e) {
-      print('Error updating family member: $e');
       state = state.copyWith(isLoading: false);
       return false;
+    } finally {
+      state = state.copyWith(isLoading: false);
     }
   }
 }

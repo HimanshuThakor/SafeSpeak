@@ -4,7 +4,6 @@ import 'package:safespeak/view/Home/HomeScreen.dart';
 import 'package:safespeak/view/Profile/ProfileScreen.dart';
 import 'package:safespeak/view/Report/ReportIncidentScreen.dart';
 import 'package:safespeak/view/Sos/SosScreen.dart';
-import 'package:safespeak/view/Support/SupportScreen.dart';
 import 'package:safespeak/view/Toxic/ToxicityScreen.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 
@@ -37,16 +36,16 @@ class SafeSpeakApp extends ConsumerWidget {
             unSelectedColor: const Color(0xFF8E8E93),
           ),
           BottomBarItem(
-            icon: const Icon(Icons.warning_amber_outlined),
-            selectedIcon: const Icon(Icons.warning),
+            icon: const Icon(Icons.flag_outlined),
+            selectedIcon: const Icon(Icons.flag),
             title: const Text('Report'),
             selectedColor: const Color(0xFF4A90E2),
             unSelectedColor: const Color(0xFF8E8E93),
           ),
           BottomBarItem(
-            icon: Icon(Icons.message_outlined),
-            title: Text("Check Toxicity"),
-            selectedIcon: Icon(Icons.message),
+            icon: Icon(Icons.manage_search_outlined),
+            title: Text("Detect"),
+            selectedIcon: Icon(Icons.manage_search),
             selectedColor: const Color(0xFF4A90E2),
             unSelectedColor: const Color(0xFF8E8E93),
           ),

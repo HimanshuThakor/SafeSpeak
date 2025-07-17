@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:safespeak/Providers/ProfileProvider.dart';
 import 'package:safespeak/view/Family/FamilyMembersListScreen.dart';
+import 'package:safespeak/view/Profile/ProfileUpdateScreen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -14,7 +15,11 @@ class ProfileScreen extends ConsumerWidget {
       ProfileMenuItem(
         icon: Icons.person_outline,
         title: 'View profile',
-        onTap: () => _showSnackBar(context, 'View profile tapped'),
+        onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfileUpdateScreen(),
+            )),
       ),
       ProfileMenuItem(
         icon: Icons.settings_outlined,

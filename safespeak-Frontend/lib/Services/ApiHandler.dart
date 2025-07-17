@@ -46,7 +46,6 @@ class ApiHandler {
       print('Response: ${response.body}');
       return _handleResponse(response);
     } catch (e) {
-      print('Error: $e');
       return {'success': false, 'error': 'An error occurred: $e'};
     }
   }
