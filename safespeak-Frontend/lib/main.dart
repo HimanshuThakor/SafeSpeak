@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:safespeak/Services/Notification_Services_Local.dart';
 import 'package:safespeak/Services/firebase_options.dart';
 import 'package:safespeak/Support/MyHttpOverrides.dart';
@@ -36,6 +37,9 @@ void main() async {
   await SystemChrome.setPreferredOrientations(
     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown],
   );
+
+  await Hive.initFlutter();
+  await Hive.openBox('chat_cache');
 
   /// Initialize Firebase
   app = await Firebase.initializeApp(
@@ -170,7 +174,6 @@ class MyApp extends StatelessWidget {
             title: 'SafeSpeak',
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-              useMaterial3: true,
             ),
             home: OnboardingScreen(),
           ),

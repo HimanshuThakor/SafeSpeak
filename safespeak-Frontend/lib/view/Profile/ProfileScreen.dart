@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:safespeak/Providers/ProfileProvider.dart';
 import 'package:safespeak/view/Family/FamilyMembersListScreen.dart';
 import 'package:safespeak/view/Profile/ProfileUpdateScreen.dart';
+import 'package:safespeak/view/Profile/rag_chat_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -27,9 +28,13 @@ class ProfileScreen extends ConsumerWidget {
         onTap: () => _showSnackBar(context, 'Settings tapped'),
       ),
       ProfileMenuItem(
-        icon: Icons.report_problem_outlined,
-        title: 'History Of Reports',
-        onTap: () => _showSnackBar(context, 'Company profile tapped'),
+        icon: Icons.chat,
+        title: 'Chat With Ai Agent',
+        onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => RAGChatScreen(),
+            )),
       ),
       ProfileMenuItem(
         icon: Icons.people_outline,
