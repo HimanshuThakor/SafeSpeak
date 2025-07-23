@@ -16,6 +16,7 @@ import 'package:safespeak/Services/Notification_Services_Local.dart';
 import 'package:safespeak/Services/firebase_options.dart';
 import 'package:safespeak/Support/MyHttpOverrides.dart';
 import 'package:safespeak/view/onboarding/onboarding_view.dart';
+import 'package:safespeak/view/onboarding/splash_Screen.dart';
 
 /// Global variables
 final FlutterLocalNotificationsPlugin notificationsPlugin =
@@ -175,7 +176,7 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             ),
-            home: OnboardingScreen(),
+            home: AnimatedSplashScreen(),
           ),
         );
       },

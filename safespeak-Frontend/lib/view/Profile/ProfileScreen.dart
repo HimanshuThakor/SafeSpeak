@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:safespeak/Providers/ProfileProvider.dart';
+import 'package:safespeak/Services/SessionManagement.dart';
+import 'package:safespeak/Utils/LoginHelper.dart';
 import 'package:safespeak/view/Family/FamilyMembersListScreen.dart';
 import 'package:safespeak/view/Profile/ProfileUpdateScreen.dart';
+import 'package:safespeak/view/Profile/blog_screen.dart';
 import 'package:safespeak/view/Profile/rag_chat_screen.dart';
+import 'package:safespeak/view/bottom_navigation/SafeSpeakBottomNav.dart';
+import 'package:safespeak/view/onboarding/splash_Screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -23,9 +28,14 @@ class ProfileScreen extends ConsumerWidget {
             )),
       ),
       ProfileMenuItem(
-        icon: Icons.settings_outlined,
-        title: 'Settings',
-        onTap: () => _showSnackBar(context, 'Settings tapped'),
+        icon: Icons.shield_outlined,
+        title: 'Safety Guidelines',
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BlogScreen(),
+          ),
+        ),
       ),
       ProfileMenuItem(
         icon: Icons.chat,
@@ -53,7 +63,9 @@ class ProfileScreen extends ConsumerWidget {
       ProfileMenuItem(
         icon: Icons.sos_outlined,
         title: 'SOS',
-        onTap: () => _showSnackBar(context, 'Changelog tapped'),
+        onTap: () {
+          ref.read(bottomNavigationProvider.notifier).state = 1;
+        },
       ),
       ProfileMenuItem(
         icon: Icons.logout_outlined,
@@ -208,15 +220,26 @@ class ProfileScreen extends ConsumerWidget {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _showSnackBar(context, 'Logged out successfully');
-              },
+              onPressed: () => _signOut(context),
               child: const Text('Log Out'),
             ),
           ],
         );
       },
+    );
+  }
+
+  Future<void> _signOut(BuildContext context) async {
+    LoginHelper loginHelper = LoginHelper();
+    loginHelper.clearToken();
+    SessionManagement sessionManagement = SessionManagement();
+    await sessionManagement.clearLocalStorage();
+    await sessionManagement.destroyMap();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const AnimatedSplashScreen(),
+      ),
     );
   }
 }

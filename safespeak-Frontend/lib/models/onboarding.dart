@@ -1,28 +1,44 @@
 import 'package:safespeak/Utils/app_assets.dart';
 
 class Onboarding {
-  String image;
-  String title;
-  String description;
+  final String image;
+  final String title;
+  final String description;
 
-  Onboarding(
-      {required this.description, required this.image, required this.title});
+  Onboarding({
+    required this.description,
+    required this.image,
+    required this.title,
+  });
 }
 
-List<Onboarding> onboardingList = [
+/// SafeSpeak onboarding data
+///
+/// Keep descriptions short (<=2 lines) for small screens.
+/// Use `\n` to control wrapping.
+final List<Onboarding> onboardingList = [
   Onboarding(
-      description:
-          'Lorem ipsum is a placeholder text commonly\nused to demonstrate the visual.',
-      image: AppAssets.kOnboardingFirst,
-      title: 'Beauty parlour\nat your home'),
+    title: 'Stay Safe Online',
+    description:
+        'AI detects harmful & bullying messages.\nYour data stays private & secure.',
+    image: AppAssets.kOnboardingFirst,
+  ),
   Onboarding(
-      description:
-          'Lorem ipsum is a placeholder text commonly\nused to demonstrate the visual.',
-      image: AppAssets.kOnboardingSecond,
-      title: ' Plumber & expart\nnearby you'),
+    title: 'Report & Get Help Fast',
+    description:
+        'One‑tap SOS or anonymous report.\nNotify trusted contacts instantly.',
+    image: AppAssets.kOnboardingSecond,
+  ),
   Onboarding(
-      description:
-          'Lorem ipsum is a placeholder text commonly\nused to demonstrate the visual.',
-      image: AppAssets.kOnboardingThird,
-      title: 'Professional home\ncleaning')
+    title: 'Learn & Build Confidence',
+    description:
+        'Cyber safety tips, privacy guides, support.\nTogether we make kinder digital spaces.',
+    image: AppAssets.kOnboardingThird,
+  ),
+  Onboarding(
+    title: 'Your Control, Your Voice',
+    description:
+        'Block, mute & manage who can contact you.\nSafeSpeak never sells your data.',
+    image: AppAssets.kOnboardingFourth, // add to assets when ready
+  ),
 ];

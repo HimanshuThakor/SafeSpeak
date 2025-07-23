@@ -69,9 +69,10 @@ class AppAssets {
   static String kSend = 'assets/icons/send.svg';
 
   // Images.
-  static String kOnboardingFirst = 'assets/Images/onboarding_first.png';
-  static String kOnboardingSecond = 'assets/Images/onboarding_second.png';
-  static String kOnboardingThird = 'assets/Images/onboarding_third.png';
+  static String kOnboardingFirst = 'assets/Images/20945823.jpg';
+  static String kOnboardingSecond = 'assets/Images/onboarding_second.jpg';
+  static String kOnboardingThird = 'assets/Images/onboarding_third.jpg';
+  static String kOnboardingFourth = 'assets/Images/onboarding_fourth.jpg';
   static String kLogoBlue = 'assets/images/logo_blue.png';
   static String kProfilePic = 'assets/images/profileImage.jpg';
   static String kCleaningService1 = 'assets/images/cleaning_service_1.png';

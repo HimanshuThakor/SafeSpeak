@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:safespeak/Utils/AppTextStyle.dart';
+import 'package:safespeak/Utils/app_colors.dart';
 import 'package:safespeak/models/onboarding.dart';
 import 'package:safespeak/view/onboarding/components/onboarding_animation.dart';
 
 class OnboardingCard extends StatefulWidget {
   final bool playAnimation;
   final Onboarding onboarding;
+
   const OnboardingCard(
       {required this.playAnimation, super.key, required this.onboarding});
 
@@ -19,6 +22,7 @@ class _OnboardingCardState extends State<OnboardingCard>
   late Animation<Offset> _slideAnimation;
 
   Animation<Offset> get slideAnimation => _slideAnimation;
+
   AnimationController get slideAnimationController => _slideAnimationController;
 
   @override
@@ -54,16 +58,23 @@ class _OnboardingCardState extends State<OnboardingCard>
     return SlideTransition(
       position: _slideAnimation,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Spacer(),
+          // const Spacer(),
           Image.asset(
             widget.onboarding.image,
             width: double.maxFinite,
+            height: 300.h,
             fit: BoxFit.fitWidth,
           ),
           SizedBox(height: 30.h),
           Text(
             widget.onboarding.title,
+            style: AppTextStyles.customStyle(
+                fontSize: 28.sp,
+                fontWeight: FontWeight.w600,
+                color: AppColors.kPrimary),
             // style: AppTypography.kBold32,
             textAlign: TextAlign.center,
           ),
@@ -71,6 +82,10 @@ class _OnboardingCardState extends State<OnboardingCard>
           Text(
             widget.onboarding.description,
             // style: AppTypography.kLight14,
+            style: AppTextStyles.customStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+                color: AppColors.kContentColor),
             textAlign: TextAlign.center,
           )
         ],

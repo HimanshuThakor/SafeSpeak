@@ -67,12 +67,6 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                   MaterialPageRoute(
                     builder: (context) => BunnyLoginScreen(),
                   ));
-              // Navigator.pushAndRemoveUntil(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => SignInScreen(),
-              //     ),);
-              // Get.offAll(() => const SignIn());
             },
           ),
           SizedBox(width: 16.w),
@@ -129,8 +123,6 @@ class OnboardingScreenState extends State<OnboardingScreen> {
                         MaterialPageRoute(
                           builder: (context) => BunnyLoginScreen(),
                         ));
-                    // Get.offAll(() => const SignIn(),
-                    //     transition: Transition.zoom);
                   },
                   width: 166.w,
                   text: 'Get Started',

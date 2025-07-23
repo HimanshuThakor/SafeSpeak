@@ -494,55 +494,6 @@ class _BunnyLoginScreenState extends ConsumerState<BunnyLoginScreen> {
                             ),
                             const SizedBox(height: 16),
                             Row(
-                              children: [
-                                Expanded(
-                                    child: Divider(color: Colors.grey[300])),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16),
-                                  child: Text(
-                                    "or",
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.grey[600],
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                    child: Divider(color: Colors.grey[300])),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton.icon(
-                              onPressed:
-                                  authState.isLoading ? null : signInWithGoogle,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.black87,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  side: BorderSide(color: Colors.grey[300]!),
-                                ),
-                                elevation: 1,
-                              ),
-                              icon: const FaIcon(
-                                FontAwesomeIcons.google,
-                                size: 20,
-                                color: Colors.red,
-                              ),
-                              label: Text(
-                                "Continue with Google",
-                                style: GoogleFonts.poppins(
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:safespeak/view/Report/ReportIncidentScreen.dart';
+import 'package:safespeak/view/bottom_navigation/SafeSpeakBottomNav.dart';
 
 // Home Screen matching SafeSpeak design exactly
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -120,7 +123,11 @@ class HomeScreen extends StatelessWidget {
                             ],
                           ),
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              ref
+                                  .read(bottomNavigationProvider.notifier)
+                                  .state = 2;
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,
                               shadowColor: Colors.transparent,
