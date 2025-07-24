@@ -447,17 +447,6 @@ class _BunnyLoginScreenState extends ConsumerState<BunnyLoginScreen> {
                                     ),
                                   ],
                                 ),
-                                // GestureDetector(
-                                //   onTap: showForgotPasswordDialog,
-                                //   child: Text(
-                                //     "Forgot Password?",
-                                //     style: GoogleFonts.poppins(
-                                //       fontSize: 14,
-                                //       color: const Color(0xffea552e),
-                                //       fontWeight: FontWeight.w500,
-                                //     ),
-                                //   ),
-                                // ),
                               ],
                             ),
                             const SizedBox(height: 24),
